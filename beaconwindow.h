@@ -2,6 +2,7 @@
 #define BEACONWINDOW_H
 
 #include <QDialog>
+#include <QStandardItemModel>
 
 namespace Ui {
 	class BeaconWindow;
@@ -18,6 +19,7 @@ protected:
 
 private:
 	Ui::BeaconWindow *ui;
+	QStandardItemModel *peers;
 };
 
 #endif // BEACONWINDOW_H
