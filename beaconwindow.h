@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include <QStandardItemModel>
+#include "connectionManager.h"
 
 namespace Ui {
 	class BeaconWindow;
@@ -20,6 +21,10 @@ protected:
 private:
 	Ui::BeaconWindow *ui;
 	QStandardItemModel *peers;
+	ConnectionManager *manager;
+
+private slots:
+	void addPeer();
 };
 
 #endif // BEACONWINDOW_H

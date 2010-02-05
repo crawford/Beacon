@@ -4,23 +4,29 @@
 #include <QObject>
 #include <QTcpSocket>
 #include <QUdpSocket>
+#include <QTcpServer>
 #include "peer.h"
 
-class ConnectionManager : QObject {
+class ConnectionManager : public QObject {
 	Q_OBJECT
 
 public:
-	ConnectionManager();
+	ConnectionManager(QString newName);
+	QList<Peer*> *getPeers();
+	void sendBroadcast();
 
 signals:
 	void newPeer();
 
 private:
 	QUdpSocket *broadcastSocket;
-	QList<Peer> *peers;
+	QTcpServer *server;
+	QList<Peer*> *peers;
+	QString name;
 
 public slots:
 	void readBroadcast();
+	void addPeer();
 
 };
 

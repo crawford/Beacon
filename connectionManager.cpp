@@ -1,12 +1,30 @@
+#include <QTcpServer>
+#include <QNetworkInterface>
 #include "ConnectionManager.h"
+#include "peer.h"
 #define BROADCAST_PORT 23493
 
-ConnectionManager::ConnectionManager() {
-	peers = new QList<Peer>();
+ConnectionManager::ConnectionManager(QString newName) {
+	name = newName;
+
+	server = new QTcpServer(this);
+	connect(server, SIGNAL(newConnection()), this, SLOT(addPeer()));
+	server->listen();
+
+	peers = new QList<Peer*>();
 	broadcastSocket = new QUdpSocket(this);
 	broadcastSocket->bind(BROADCAST_PORT);
 
 	connect(broadcastSocket, SIGNAL(readyRead()), this, SLOT(readBroadcast()));
+}
+
+void ConnectionManager::sendBroadcast() {
+	QByteArray datagram(name.toAscii());
+	datagram.append('@');
+	datagram.append(QByteArray::number(server->serverPort()));
+
+	QHostAddress address = QNetworkInterface::allAddresses().at(0);
+	broadcastSocket->writeDatagram(datagram, address, BROADCAST_PORT);
 }
 
 void ConnectionManager::readBroadcast() {
@@ -35,8 +53,16 @@ void ConnectionManager::readBroadcast() {
 		if(socket->waitForConnected(5000))
 			continue;
 
-		peers->append(Peer(list.at(0), socket));
+		peers->append(new Peer(list.at(0), socket));
 
 		emit newPeer();
 	}
+}
+
+QList<Peer*> *ConnectionManager::getPeers() {
+	return peers;
+}
+
+void ConnectionManager::addPeer() {
+
 }
