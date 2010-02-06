@@ -7,7 +7,7 @@ BeaconWindow::BeaconWindow(QWidget *parent) : QDialog(parent), ui(new Ui::Beacon
 	peers->appendRow(new QStandardItem("Test1"));
 	peers->appendRow(new QStandardItem("Test2"));
 
-	manager = new ConnectionManager("Remote Test");
+	manager = new ConnectionManager(qApp->arguments().at(1));
 	connect(manager, SIGNAL(newPeer()), this, SLOT(addPeer()));
 	manager->sendBroadcast();
 

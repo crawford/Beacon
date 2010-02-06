@@ -23,6 +23,10 @@ private:
 	QTcpServer *server;
 	QList<Peer*> *peers;
 	QString name;
+	QList<QHostAddress> broadcastAddresses;
+	QList<QHostAddress> localAddresses;
+
+	void updateAddresses();
 
 public slots:
 	void readBroadcast();
