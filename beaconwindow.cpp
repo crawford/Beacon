@@ -8,8 +8,8 @@ BeaconWindow::BeaconWindow(QWidget *parent) : QDialog(parent), ui(new Ui::Beacon
 	peers->appendRow(new QStandardItem("Test2"));
 
 	manager = new ConnectionManager(qApp->arguments().at(1));
-	connect(manager, SIGNAL(newPeer()), this, SLOT(addPeer()));
-	manager->sendBroadcast();
+	connect(manager, SIGNAL(changedPeers()), this, SLOT(updatePeers()));
+	manager->sendOnlineBroadcast();
 
 	ui->setupUi(this);
 	ui->lstPeers->setModel(peers);
@@ -19,7 +19,11 @@ BeaconWindow::~BeaconWindow() {
 	delete ui;
 }
 
-void BeaconWindow::addPeer() {
+void BeaconWindow::closeEvent(QCloseEvent *e) {
+	manager->sendOfflineBroadcast();
+}
+
+void BeaconWindow::updatePeers() {
 	peers->clear();
 
 	QList<Peer*> *peerLinks = manager->getPeers();

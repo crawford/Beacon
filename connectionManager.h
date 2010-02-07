@@ -13,10 +13,11 @@ class ConnectionManager : public QObject {
 public:
 	ConnectionManager(QString newName);
 	QList<Peer*> *getPeers();
-	void sendBroadcast();
+	void sendOnlineBroadcast();
+	void sendOfflineBroadcast();
 
 signals:
-	void newPeer();
+	void changedPeers();
 
 private:
 	QUdpSocket *broadcastSocket;
@@ -27,10 +28,11 @@ private:
 	QList<QHostAddress> localAddresses;
 
 	void updateAddresses();
+	enum MessageType {ONLINE, NAME, OFFLINE};
 
 public slots:
 	void readBroadcast();
-	void addPeer();
+	void handleNewConnection();
 
 };
 

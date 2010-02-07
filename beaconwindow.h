@@ -16,7 +16,7 @@ public:
 	~BeaconWindow();
 
 protected:
-
+	virtual void closeEvent(QCloseEvent *e);
 
 private:
 	Ui::BeaconWindow *ui;
@@ -24,7 +24,7 @@ private:
 	ConnectionManager *manager;
 
 private slots:
-	void addPeer();
+	void updatePeers();
 };
 
 #endif // BEACONWINDOW_H
