@@ -28,12 +28,12 @@ private:
 	QList<QHostAddress> localAddresses;
 
 	void updateAddresses();
-	enum MessageType {ONLINE, NAME, OFFLINE};
+	enum MessageType {ONLINE, NAME, OFFLINE, MESSAGE};
 
 public slots:
 	void readBroadcast();
 	void handleNewConnection();
-
+	void handleMessage(QByteArray message);
 };
 
 #endif // CONNECTIONMANAGER_H

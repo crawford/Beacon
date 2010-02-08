@@ -108,7 +108,33 @@ QList<Peer*> *ConnectionManager::getPeers() {
 void ConnectionManager::handleNewConnection() {
 	while(server->hasPendingConnections()) {
 		QTcpSocket *socket = server->nextPendingConnection();
-		peers->append(new Peer("Somebody", socket));
+
+		QByteArray message(1, NAME);
+		socket->write(message);
+		if(socket->waitForReadyRead(3000)) {
+			QByteArray message = socket->readAll();
+			QList<QByteArray> list = message.split('.');
+			if(list.size() == 2) {
+				if(list.at(0).at(0) == NAME) {
+					Peer *peer = new Peer(list.at(1), socket);
+					connect(peer, SIGNAL(gotMessage()), this, SLOT(handleMessage(QByteArray)));
+					peers->append(peer);
+					continue;
+				}
+			}
+		}
+
+		socket->disconnectFromHost();
 	}
-	emit changedPeers();
+}
+
+void ConnectionManager::handleMessage(QByteArray message) {
+	QList<QByteArray> list = message.split('.');
+	if(list.at(0).at(0) == NAME) {
+		if(list.size() == 1) {
+
+		} else {
+
+		}
+	}
 }

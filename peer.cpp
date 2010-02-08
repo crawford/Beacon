@@ -3,6 +3,8 @@
 Peer::Peer(QString newName, QTcpSocket *newSocket) {
 	name = newName;
 	socket = newSocket;
+
+	connect(socket, SIGNAL(readyRead()), this, SLOT(handleMessage()));
 }
 
 QString Peer::getName() {
@@ -11,4 +13,8 @@ QString Peer::getName() {
 
 QTcpSocket* Peer::getSocket() {
 	return socket;
+}
+
+void Peer::handleMessage() {
+	emit gotMessage(socket->readAll());
 }
