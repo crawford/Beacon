@@ -5,10 +5,15 @@ Peer::Peer(QString newName, QTcpSocket *newSocket) {
 	socket = newSocket;
 
 	connect(socket, SIGNAL(readyRead()), this, SLOT(handleMessage()));
+	connect(socket, SIGNAL(disconnected()), this, SLOT(handleDisconnect()));
 }
 
 QString Peer::getName() {
 	return name;
+}
+
+void Peer::setName(QString newName) {
+	name = name;
 }
 
 QTcpSocket* Peer::getSocket() {
@@ -16,5 +21,13 @@ QTcpSocket* Peer::getSocket() {
 }
 
 void Peer::handleMessage() {
-	emit gotMessage(socket->readAll());
+	emit gotMessage(this);
+}
+
+void Peer::handleDisconnect() {
+	emit disconnected(this);
+}
+
+QByteArray Peer::readMessage() {
+	return socket->readAll();
 }

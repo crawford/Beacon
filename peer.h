@@ -5,22 +5,26 @@
 #include <QTcpSocket>
 #include <QString>
 
-class Peer : QObject {
+class Peer : public QObject {
 	Q_OBJECT
 public:
 	Peer(QString newName, QTcpSocket *newSocket);
 	QTcpSocket* getSocket();
 	QString getName();
+	void setName(QString newName);
+	QByteArray readMessage();
 
 signals:
-	QByteArray gotMessage();
+	void gotMessage(Peer *peer);
+	void disconnected(Peer *peer);
 
 private:
 	QTcpSocket *socket;
 	QString name;
 
-slots:
+private slots:
 	void handleMessage();
+	void handleDisconnect();
 };
 
 #endif // PEER_H

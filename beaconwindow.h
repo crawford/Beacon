@@ -16,7 +16,6 @@ public:
 	~BeaconWindow();
 
 protected:
-	virtual void closeEvent(QCloseEvent *e);
 
 private:
 	Ui::BeaconWindow *ui;

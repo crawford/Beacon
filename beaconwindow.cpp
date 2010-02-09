@@ -19,10 +19,6 @@ BeaconWindow::~BeaconWindow() {
 	delete ui;
 }
 
-void BeaconWindow::closeEvent(QCloseEvent *e) {
-	manager->sendOfflineBroadcast();
-}
-
 void BeaconWindow::updatePeers() {
 	peers->clear();
 

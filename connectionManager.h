@@ -28,12 +28,14 @@ private:
 	QList<QHostAddress> localAddresses;
 
 	void updateAddresses();
-	enum MessageType {ONLINE, NAME, OFFLINE, MESSAGE};
+	enum MessageType {ONLINE, NAME, MESSAGE};
+	void addPeer(QString name, QTcpSocket *socket);
 
-public slots:
+private slots:
 	void readBroadcast();
 	void handleNewConnection();
-	void handleMessage(QByteArray message);
+	void handleMessage(Peer *peer);
+	void handleDisconnect(Peer *peer);
 };
 
 #endif // CONNECTIONMANAGER_H

@@ -3,7 +3,6 @@
 
 #include <QTcpServer>
 #include <QNetworkInterface>
-#include <QMessageBox>
 
 #define BROADCAST_PORT 23493
 
@@ -50,18 +49,6 @@ void ConnectionManager::sendOnlineBroadcast() {
 	}
 }
 
-void ConnectionManager::sendOfflineBroadcast() {
-	QByteArray datagram(1, OFFLINE);
-	datagram.append('.');
-	datagram.append(name.toAscii());
-	datagram.append('.');
-	datagram.append(QByteArray::number(server->serverPort()));
-
-	foreach(QHostAddress address, broadcastAddresses) {
-		broadcastSocket->writeDatagram(datagram, address, BROADCAST_PORT);
-	}
-}
-
 void ConnectionManager::readBroadcast() {
 	while (broadcastSocket->hasPendingDatagrams()) {
 		QHostAddress senderIP;
@@ -87,18 +74,18 @@ void ConnectionManager::readBroadcast() {
 			if(!socket->waitForConnected(5000))
 				continue;
 
-			peers->append(new Peer(list.at(1), socket));
-
-			emit changedPeers();
-		} else if(list.at(0).at(0) == OFFLINE) {
-			foreach(Peer *peer, *peers) {
-				if(peer->getName() == list.at(1))
-					peers->removeOne(peer);
-			}
-
-			emit changedPeers();
+			addPeer(list.at(1), socket);
 		}
 	}
+}
+
+void ConnectionManager::addPeer(QString name, QTcpSocket *socket) {
+	Peer *peer = new Peer(name, socket);
+		connect(peer, SIGNAL(gotMessage(Peer*)), this, SLOT(handleMessage(Peer*)));
+		connect(peer, SIGNAL(disconnected(Peer*)), this, SLOT(handleDisconnect(Peer*)));
+		peers->append(peer);
+
+		emit changedPeers();
 }
 
 QList<Peer*> *ConnectionManager::getPeers() {
@@ -116,9 +103,7 @@ void ConnectionManager::handleNewConnection() {
 			QList<QByteArray> list = message.split('.');
 			if(list.size() == 2) {
 				if(list.at(0).at(0) == NAME) {
-					Peer *peer = new Peer(list.at(1), socket);
-					connect(peer, SIGNAL(gotMessage()), this, SLOT(handleMessage(QByteArray)));
-					peers->append(peer);
+					addPeer(list.at(1), socket);
 					continue;
 				}
 			}
@@ -128,13 +113,20 @@ void ConnectionManager::handleNewConnection() {
 	}
 }
 
-void ConnectionManager::handleMessage(QByteArray message) {
-	QList<QByteArray> list = message.split('.');
+void ConnectionManager::handleMessage(Peer *peer) {
+	QList<QByteArray> list = peer->readMessage().split('.');
 	if(list.at(0).at(0) == NAME) {
 		if(list.size() == 1) {
+			QByteArray response(1, NAME);
+			response += '.';
+			response += name;
 
-		} else {
-
+			peer->getSocket()->write(response);
 		}
 	}
+}
+
+void ConnectionManager::handleDisconnect(Peer *peer) {
+	peers->removeOne(peer);
+	emit changedPeers();
 }
