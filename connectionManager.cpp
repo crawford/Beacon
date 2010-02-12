@@ -82,11 +82,11 @@ void ConnectionManager::readBroadcast() {
 
 void ConnectionManager::addPeer(QString name, QTcpSocket *socket) {
 	Peer *peer = new Peer(name, socket);
-		connect(peer, SIGNAL(gotMessage(Peer*)), this, SLOT(handleMessage(Peer*)));
-		connect(peer, SIGNAL(disconnected(Peer*)), this, SLOT(handleDisconnect(Peer*)));
-		peers->append(peer);
+	connect(peer, SIGNAL(gotMessage(Peer*)), this, SLOT(handleMessage(Peer*)));
+	connect(peer, SIGNAL(disconnected(Peer*)), this, SLOT(handleDisconnect(Peer*)));
+	peers->append(peer);
 
-		emit changedPeers();
+	emit changedPeers();
 }
 
 QList<Peer*> *ConnectionManager::getPeers() {
