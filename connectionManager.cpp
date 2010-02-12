@@ -3,6 +3,7 @@
 
 #include <QTcpServer>
 #include <QNetworkInterface>
+#include <QMessageBox>
 
 #define BROADCAST_PORT 23493
 
@@ -123,6 +124,8 @@ void ConnectionManager::handleMessage(Peer *peer) {
 
 			peer->getSocket()->write(response);
 		}
+	} else {
+		QMessageBox::information(0, "Got Message", QString(list.at(0)));
 	}
 }
 

@@ -13,6 +13,7 @@ public:
 	QString getName();
 	void setName(QString newName);
 	QByteArray readMessage();
+	int getID();
 
 signals:
 	void gotMessage(Peer *peer);
@@ -21,6 +22,7 @@ signals:
 private:
 	QTcpSocket *socket;
 	QString name;
+	int id;
 
 private slots:
 	void handleMessage();

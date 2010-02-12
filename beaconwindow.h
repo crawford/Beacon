@@ -24,6 +24,7 @@ private:
 
 private slots:
 	void updatePeers();
+	void on_btnSend_clicked();
 };
 
 #endif // BEACONWINDOW_H
