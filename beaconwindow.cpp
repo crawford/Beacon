@@ -58,6 +58,8 @@ void BeaconWindow::updatePeers() {
 		item->setData(peerLinks->at(i)->getID());
 		peers->appendRow(item);
 	}
+
+	on_lstPeers_clicked();
 }
 
 void BeaconWindow::on_btnSend_clicked() {
