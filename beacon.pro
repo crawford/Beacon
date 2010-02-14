@@ -12,3 +12,5 @@ HEADERS += beaconwindow.h \
     connectionManager.h \
     peer.h
 FORMS += beaconwindow.ui
+RESOURCES += icons.qrc
+RC_FILE += beacon.rc

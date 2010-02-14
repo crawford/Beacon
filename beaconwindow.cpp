@@ -2,21 +2,50 @@
 #include "ui_beaconwindow.h"
 #include <QStandardItem>
 #include <QMessageBox>
+#include <QInputDialog>
+#include <QSettings>
+#include <QMenu>
 
-BeaconWindow::BeaconWindow(QWidget *parent) : QDialog(parent), ui(new Ui::BeaconWindow) {
+BeaconWindow::BeaconWindow(QWidget *parent) : QDialog(parent), ui(new Ui::BeaconWindow) {	
+	//Load configuration settings
+	QSettings settings("config.ini", QSettings::IniFormat, this);
+	QString name = settings.value("Name", "").toString();
+	while(name == "") {
+		name = QInputDialog::getText(this, "User Name", "Enter your name", QLineEdit::Normal, "", 0,
+					Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint | Qt::WindowTitleHint | Qt::CustomizeWindowHint);
+		settings.setValue("Name", name);
+		settings.sync();
+	}
+
+	//Setup model for peers
 	peers = new QStandardItemModel(this);
-	peers->appendRow(new QStandardItem("Test1"));
-	peers->appendRow(new QStandardItem("Test2"));
 
-	manager = new ConnectionManager(qApp->arguments().at(1));
+	//Create connections to all peers
+	manager = new ConnectionManager(name);
 	connect(manager, SIGNAL(changedPeers()), this, SLOT(updatePeers()));
 	manager->sendOnlineBroadcast();
 
+	//Setup ui
 	ui->setupUi(this);
+	setWindowFlags(Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint | Qt::WindowTitleHint | Qt::CustomizeWindowHint);
 	ui->lstPeers->setModel(peers);
+
+	//Create system tray
+	tray = new QSystemTrayIcon(this);
+	tray->setIcon(QIcon(":/Icons/megaphone.png"));
+
+	QMenu *menu = new QMenu(this);
+	menu->setDefaultAction(menu->addAction("Send Message...", this, SLOT(show())));
+	menu->addAction("Quit", this, SLOT(close()));
+	tray->setContextMenu(menu);
+	connect(tray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(on_tray_triggered(QSystemTrayIcon::ActivationReason)));
+	tray->show();
+
+	setVisible(false);
 }
 
 BeaconWindow::~BeaconWindow() {
+	tray->hide();
 	delete ui;
 }
 
@@ -42,5 +71,15 @@ void BeaconWindow::on_btnSend_clicked() {
 				i = peerLinks->size();
 			}
 		}
+	}
+}
+
+void BeaconWindow::on_lstPeers_clicked() {
+	ui->btnSend->setEnabled(ui->lstPeers->selectionModel()->selectedIndexes().size() != 0);
+}
+
+void BeaconWindow::on_tray_triggered(QSystemTrayIcon::ActivationReason reason) {
+	if(reason == QSystemTrayIcon::DoubleClick) {
+		show();
 	}
 }

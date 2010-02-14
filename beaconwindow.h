@@ -1,9 +1,10 @@
 #ifndef BEACONWINDOW_H
 #define BEACONWINDOW_H
 
+#include "connectionManager.h"
 #include <QDialog>
 #include <QStandardItemModel>
-#include "connectionManager.h"
+#include <QSystemTrayIcon>
 
 namespace Ui {
 	class BeaconWindow;
@@ -21,10 +22,13 @@ private:
 	Ui::BeaconWindow *ui;
 	QStandardItemModel *peers;
 	ConnectionManager *manager;
+	QSystemTrayIcon *tray;
 
 private slots:
 	void updatePeers();
 	void on_btnSend_clicked();
+	void on_lstPeers_clicked();
+	void on_tray_triggered(QSystemTrayIcon::ActivationReason reason);
 };
 
 #endif // BEACONWINDOW_H
