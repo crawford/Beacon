@@ -38,10 +38,8 @@ BeaconWindow::BeaconWindow(QWidget *parent) : QDialog(parent), ui(new Ui::Beacon
 	menu->setDefaultAction(menu->addAction("Send Message...", this, SLOT(show())));
 	menu->addAction("Quit", this, SLOT(close()));
 	tray->setContextMenu(menu);
-	connect(tray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(on_tray_triggered(QSystemTrayIcon::ActivationReason)));
+	connect(tray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(handleTrayEvent(QSystemTrayIcon::ActivationReason)));
 	tray->show();
-
-	setVisible(false);
 }
 
 BeaconWindow::~BeaconWindow() {
@@ -80,7 +78,7 @@ void BeaconWindow::on_lstPeers_clicked() {
 	ui->btnSend->setEnabled(ui->lstPeers->selectionModel()->selectedIndexes().size() != 0);
 }
 
-void BeaconWindow::on_tray_triggered(QSystemTrayIcon::ActivationReason reason) {
+void BeaconWindow::handleTrayEvent(QSystemTrayIcon::ActivationReason reason) {
 	if(reason == QSystemTrayIcon::DoubleClick) {
 		show();
 	}
