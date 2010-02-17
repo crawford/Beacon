@@ -18,6 +18,7 @@ public:
 
 signals:
 	void changedPeers();
+	void gotMessage(QString message, Peer *sender);
 
 private:
 	QUdpSocket *broadcastSocket;

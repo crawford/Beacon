@@ -29,6 +29,7 @@ private slots:
 	void on_btnSend_clicked();
 	void on_lstPeers_clicked();
 	void handleTrayEvent(QSystemTrayIcon::ActivationReason reason);
+	void handleMessage(QString message, Peer *sender);
 };
 
 #endif // BEACONWINDOW_H

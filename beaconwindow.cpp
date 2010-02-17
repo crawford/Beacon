@@ -23,6 +23,7 @@ BeaconWindow::BeaconWindow(QWidget *parent) : QDialog(parent), ui(new Ui::Beacon
 	//Create connections to all peers
 	manager = new ConnectionManager(name);
 	connect(manager, SIGNAL(changedPeers()), this, SLOT(updatePeers()));
+	connect(manager, SIGNAL(gotMessage(QString,Peer*)), this, SLOT(handleMessage(QString,Peer*)));
 	manager->sendOnlineBroadcast();
 
 	//Setup ui
@@ -82,4 +83,8 @@ void BeaconWindow::handleTrayEvent(QSystemTrayIcon::ActivationReason reason) {
 	if(reason == QSystemTrayIcon::DoubleClick) {
 		show();
 	}
+}
+
+void BeaconWindow::handleMessage(QString message, Peer *sender) {
+	tray->showMessage(sender->getName(), message);
 }

@@ -125,7 +125,7 @@ void ConnectionManager::handleMessage(Peer *peer) {
 			peer->getSocket()->write(response);
 		}
 	} else {
-		QMessageBox::information(0, "Got Message", QString(list.at(0)));
+		emit gotMessage(QString(list.at(0)), peer);
 	}
 }
 
