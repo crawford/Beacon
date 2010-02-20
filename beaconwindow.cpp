@@ -73,6 +73,9 @@ void BeaconWindow::on_btnSend_clicked() {
 			}
 		}
 	}
+
+	ui->txtMessage->clear();
+	hide();
 }
 
 void BeaconWindow::on_lstPeers_clicked() {
