@@ -1,0 +1,4 @@
+BUild
+ - Install the QT SDK from TrollTech
+ - run qmake in the root folder
+ - run make
